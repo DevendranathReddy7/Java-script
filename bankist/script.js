@@ -67,13 +67,40 @@ const displayMovements = (movements) => {
     const type = mov > 0 ? "deposit" : "withdrawal";
     const html = `<div class="movements__row">
     <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
-    <div class="movements__value">${mov}</div>
+    <div class="movements__value">${mov}€</div>
     </div>`;
 
     containerMovements.insertAdjacentHTML("afterbegin", html);
   });
 };
 displayMovements(account1.movements);
+
+const dispalyBalance = (movements) => {
+  const balance = movements.reduce((acc, cum, i, arr) => acc + cum);
+  labelBalance.textContent = `${balance} €`;
+};
+dispalyBalance(account1.movements);
+
+const displaySummaryBal = (movements) => {
+  const inAmnt = movements
+    .filter((mov) => mov > 0)
+    .reduce((acc, mov) => acc + mov);
+  labelSumIn.textContent = `${inAmnt}€`;
+
+  const outAmnt = movements
+    .filter((mov) => mov < 0)
+    .reduce((acc, mov) => acc + mov);
+  labelSumOut.textContent = `${Math.abs(outAmnt)}€`;
+
+  const intrest = movements
+    .filter((mov) => mov > 0)
+    .map((deposits) => (deposits * 1.2) / 100)
+    .filter((int, i, arr) => int > 1)
+    .reduce((acc, int) => acc + int, 0);
+
+  labelSumInterest.textContent = `${intrest}€`;
+};
+displaySummaryBal(account1.movements);
 
 const createUsernames = function (accounts) {
   accounts.forEach((acct) => {
@@ -85,8 +112,20 @@ const createUsernames = function (accounts) {
   });
 };
 
-const data = createUsernames(accounts);
-console.log(data);
+createUsernames(accounts);
+
+let currentAccount;
+btnLogin.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  currentAccount = accounts.find(
+    (acc) => acc.userName === inputLoginUsername.value
+  );
+
+  if (currentAccount?.pin === Number(inputLoginPin.value)) {
+    containerApp.style.opacity = "100%";
+  }
+});
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
@@ -110,3 +149,14 @@ const movementsDesc = movements.map((mov, i) => {
     mov
   )}`;
 });
+
+const deposits = movements.filter((mov) => mov > 0);
+
+const withdrawals = movements.filter((mov) => mov < 0);
+
+const balance = movements.reduce((acc, cum, i, arr) => acc + cum);
+
+const max = movements.reduce((acc, mov) => {
+  if (acc > mov) return acc;
+  else return mov;
+}, movements[0]);
