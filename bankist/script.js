@@ -61,9 +61,12 @@ const inputLoanAmount = document.querySelector(".form__input--loan-amount");
 const inputCloseUsername = document.querySelector(".form__input--user");
 const inputClosePin = document.querySelector(".form__input--pin");
 
-const displayMovements = (movements) => {
+const displayMovements = (movements, sort = false) => {
   containerMovements.innerHTML = ""; //this will remove default values
-  movements.forEach(function (mov, i) {
+
+  const mov = sort ? movements.slice().sort((a, b) => a - b) : movements; //slice will copy array intead of making cahnrs to original array
+
+  mov.forEach(function (mov, i) {
     const type = mov > 0 ? "deposit" : "withdrawal";
     const html = `<div class="movements__row">
     <div class="movements__type movements__type--${type}">${i + 1} ${type}</div>
@@ -117,6 +120,8 @@ const updateUI = (currentAccount) => {
   displaySummaryBal(currentAccount);
 };
 let currentAccount;
+
+//login
 btnLogin.addEventListener("click", (e) => {
   e.preventDefault();
 
@@ -135,6 +140,7 @@ btnLogin.addEventListener("click", (e) => {
   }
 });
 
+//transfer amount
 btnTransfer.addEventListener("click", function (e) {
   e.preventDefault();
   const amount = Number(inputTransferAmount.value);
@@ -154,6 +160,20 @@ btnTransfer.addEventListener("click", function (e) {
   }
 });
 
+//loan request
+btnLoan.addEventListener("click", function (e) {
+  e.preventDefault();
+  const requestedLoan = Number(inputLoanAmount.value);
+  const isapply = currentAccount.movements.some(
+    (bal) => bal >= requestedLoan * 0.1
+  );
+  if (requestedLoan > 0 && isapply) {
+    currentAccount.movements.push(requestedLoan);
+    updateUI(currentAccount);
+  }
+  inputLoanAmount.value = "";
+});
+//close account
 btnClose.addEventListener("click", function (e) {
   e.preventDefault();
   if (
@@ -169,6 +189,14 @@ btnClose.addEventListener("click", function (e) {
   }
   inputCloseUsername.value = inputClosePin.value = "";
 });
+//sort balnce
+let sorted = false;
+btnSort.addEventListener("click", function (e) {
+  e.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
+});
+
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
 // LECTURES
