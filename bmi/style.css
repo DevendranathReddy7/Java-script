@@ -1,0 +1,23 @@
+.div__item{
+    margin-bottom: 10px;
+}
+
+.red {
+    padding: 10px;
+    background-color: red;
+    display: inline;
+  }
+  
+.normal {
+    padding: 10px ;
+    background-color: green;
+    display: inline;
+
+}
+  
+.yellow {
+    padding: 10px;
+    background-color: yellow;
+    display: inline;
+
+}
